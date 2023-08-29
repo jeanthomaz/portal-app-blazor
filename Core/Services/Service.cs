@@ -1,10 +1,19 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
 
-namespace Persistence.Repositories;
+namespace Core.Services;
 
-public class Repository : IRepository
+public class Service : IService
 {
+    private readonly IRepository _repository;
+
+    public Service(IRepository repository)
+    {
+        _repository = repository;
+    }
+
+    #region Presentation Methods
+
     public void AddPresentation(Presentation presentation)
     {
         throw new NotImplementedException();
@@ -29,6 +38,10 @@ public class Repository : IRepository
     {
         throw new NotImplementedException();
     }
+
+    #endregion
+
+    #region Group Methods
 
     public void AddGroup(Group group)
     {
@@ -55,6 +68,10 @@ public class Repository : IRepository
         throw new NotImplementedException();
     }
 
+    #endregion
+
+    #region Student Methods
+
     public void AddStudent(Student student)
     {
         throw new NotImplementedException();
@@ -74,4 +91,6 @@ public class Repository : IRepository
     {
         throw new NotImplementedException();
     }
+
+    #endregion
 }

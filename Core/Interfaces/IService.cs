@@ -2,7 +2,7 @@
 
 namespace Core.Interfaces;
 
-public interface IRepository
+public interface IService
 {
     public void AddPresentation(Presentation presentation);
     public List<Presentation> ListAllPresentations();
