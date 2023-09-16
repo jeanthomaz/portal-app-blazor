@@ -14,7 +14,7 @@ namespace Api.Service
             return students;
         }
 
-        public Student GetStudentById(Guid id)
+        public Student GetStudentById(int id)
         {
             return students.FirstOrDefault(student => student.Id == id);
         }

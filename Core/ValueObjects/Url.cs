@@ -2,19 +2,23 @@
 
 public class Url
 {
-    private readonly string _url;
-
+    public int Id { get; private set; }
+    public string Address { get; private set;}
+    public Url()
+    {
+    }
+    
     public Url(string url)
     {
         if (!IsValid())
             throw new ArgumentException("URL inválida");
 
-        _url = url;
+        Address = url;
     }
-
+    
     public override string ToString()
     {
-        return _url;
+        return Address;
     }
 
     private bool IsValid()

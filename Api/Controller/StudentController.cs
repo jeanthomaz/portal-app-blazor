@@ -1,7 +1,5 @@
 ﻿using Core.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using Api.Model;
 using Api.Service;
 
@@ -19,7 +17,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetStudentById(Guid id)
+        public IActionResult GetStudentById(int id)
         {
             var student = studentService.GetStudentById(id);
 

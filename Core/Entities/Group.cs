@@ -2,11 +2,11 @@
 {
     public class Group
     {
-        public readonly Guid Id;
-        public readonly List<Presentation> Presentations;
+        public int Id { get; private set; }
+        public List<Presentation> Presentations { get; set; }
         public List<Student> GroupMembers { get; set; } 
-        public readonly string Subject;
-        public readonly Guid PrivateKey;
+        public string Subject { get; private set; }
+        public Guid PrivateKey { get; private set; }
         public string CreatedByUserId { get; private set; }
 
         /// <summary>
@@ -19,7 +19,6 @@
 
         public Group(string subject, List<Student> groupMembers, List<Presentation> presentations, string createdByUserId)
         {
-            Id = Guid.NewGuid();
             Subject = subject;
             GroupMembers = groupMembers;
             Presentations = presentations;

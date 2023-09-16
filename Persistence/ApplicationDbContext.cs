@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
@@ -19,16 +20,4 @@ public class ApplicationDbContext  : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlite("Data Source=mydb.db;");
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Presentation>().HasKey(p => p.Id);
-        modelBuilder.Entity<Presentation>().ToTable("Presentation");
-        
-        modelBuilder.Entity<Student>().HasKey(p => p.Id);
-        modelBuilder.Entity<Student>().ToTable("Student");
-        
-        modelBuilder.Entity<Group>().HasKey(p => p.Id);
-        modelBuilder.Entity<Group>().ToTable("Group");
-    }
 }

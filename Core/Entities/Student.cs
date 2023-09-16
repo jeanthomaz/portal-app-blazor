@@ -2,17 +2,17 @@
 
 public class Student
 {
-    public readonly Guid Id;
+    public int Id { get; private set; }
     
     /// <summary>
     /// Nome completo
     /// </summary>
-    public readonly string Name;
+    public string Name { get; private set; }
 
     /// <summary>
     /// Papel no trabalho. Ex: "Desenvolvedor", "Analista", etc.
     /// </summary>
-    public readonly string Role;
+    public string Role { get; private set; }
 
 
     /// <summary>
@@ -25,7 +25,6 @@ public class Student
 
     public Student(string name, string role)
     {
-        Id = Guid.NewGuid();
         Name = name;
         Role = role;
     }

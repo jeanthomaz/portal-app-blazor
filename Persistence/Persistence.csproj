@@ -21,4 +21,22 @@
     </ItemGroup>
 
 
+    <ItemGroup>
+      <Compile Remove="Migrations\20230826002710_InitialCreate.cs" />
+      <Compile Remove="Migrations\20230826002710_InitialCreate.Designer.cs" />
+      <Compile Remove="Migrations\ApplicationDbContextModelSnapshot.cs" />
+      <Compile Remove="Migrations\20230916233702_InitialCreate.cs" />
+      <Compile Remove="Migrations\20230916233702_InitialCreate.Designer.cs" />
+      <Compile Remove="Migrations\20230916234108_CriacaoInicial.cs" />
+      <Compile Remove="Migrations\20230916234108_CriacaoInicial.Designer.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="mydb.db" />
+    </ItemGroup>
+
 </Project>

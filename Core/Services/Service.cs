@@ -24,7 +24,7 @@ public class Service : IService
         throw new NotImplementedException();
     }
 
-    public Presentation GetPresentationById(Guid id)
+    public Presentation GetPresentationById(int id)
     {
         throw new NotImplementedException();
     }
@@ -53,7 +53,7 @@ public class Service : IService
         throw new NotImplementedException();
     }
 
-    public Group GetGroupById(Guid id)
+    public Group GetGroupById(int id)
     {
         throw new NotImplementedException();
     }
