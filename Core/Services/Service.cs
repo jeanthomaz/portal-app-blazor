@@ -72,24 +72,37 @@ public class Service : IService
 
     #region Student Methods
 
-    public void AddStudent(Student student)
+    public void AddStudentToGroup(Student student, int groupId)
     {
-        throw new NotImplementedException();
+        var group = _repository.GetGroupById(groupId);
+        if (group is null)
+            throw new Exception("Grupo não encontrado.");
+        
+        group.AddStudent(student);
+        _repository.UpdateGroup(group);
     }
 
     public List<Student> ListAllStudents()
     {
-        throw new NotImplementedException();
+        return _repository.ListAllStudents();
     }
 
     public void UpdateStudent(Student student)
     {
-        throw new NotImplementedException();
+        var oldStudent = _repository.GetStudentById(student.Id);
+        if (oldStudent is null)
+            throw new Exception("Estudante não encontrado.");
+        
+        _repository.UpdateStudent(student);
     }
 
     public void DeleteStudent(Student student)
     {
-        throw new NotImplementedException();
+        var oldStudent = _repository.GetStudentById(student.Id);
+        if (oldStudent is null)
+            throw new Exception("Estudante não encontrado.");
+        
+        _repository.DeleteStudent(student);
     }
 
     #endregion

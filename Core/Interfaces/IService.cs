@@ -16,7 +16,7 @@ public interface IService
     public void UpdateGroup(Group group);
     public void DeleteGroup(Group group);
     
-    public void AddStudent(Student student);
+    public void AddStudentToGroup(Student student, int groupId);
     public List<Student> ListAllStudents();
     public void UpdateStudent(Student student);
     public void DeleteStudent(Student student);

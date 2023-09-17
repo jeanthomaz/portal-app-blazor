@@ -5,6 +5,13 @@ namespace Persistence.Repositories;
 
 public class Repository : IRepository
 {
+    private readonly ApplicationDbContext _context;
+
+    public Repository(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+
     public void AddPresentation(Presentation presentation)
     {
         throw new NotImplementedException();
@@ -57,21 +64,29 @@ public class Repository : IRepository
 
     public void AddStudent(Student student)
     {
-        throw new NotImplementedException();
+        _context.Students.Add(student);
+        _context.SaveChanges();
+    }
+
+    public Student? GetStudentById(int id)
+    {
+        return _context.Students.FirstOrDefault(s => s.Id == id);
     }
 
     public List<Student> ListAllStudents()
     {
-        throw new NotImplementedException();
+        return _context.Students.ToList();
     }
 
     public void UpdateStudent(Student student)
     {
-        throw new NotImplementedException();
+        _context.Students.Update(student);
+        _context.SaveChanges();
     }
 
     public void DeleteStudent(Student student)
     {
-        throw new NotImplementedException();
+        _context.Students.Remove(student);
+        _context.SaveChanges();
     }
 }
