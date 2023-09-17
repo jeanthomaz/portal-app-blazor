@@ -74,35 +74,71 @@ public class Service : IService
 
     public void AddStudentToGroup(Student student, int groupId)
     {
-        var group = _repository.GetGroupById(groupId);
-        if (group is null)
-            throw new Exception("Grupo não encontrado.");
-        
-        group.AddStudent(student);
-        _repository.UpdateGroup(group);
+        try
+        {
+            var group = _repository.GetGroupById(groupId);
+            if (group is null)
+                throw new Exception("Grupo não encontrado.");
+            
+            group.AddStudent(student);
+            _repository.UpdateGroup(group);
+        }
+        catch (Exception e)
+        {
+            var message = $"Falha ao adicionar estudante {student.Name} ao grupo {groupId}. Erro: ";
+            Console.WriteLine(message + e);
+            throw;
+        }
     }
 
     public List<Student> ListAllStudents()
     {
-        return _repository.ListAllStudents();
+        try
+        {
+            return _repository.ListAllStudents();
+        }
+        catch (Exception e)
+        {
+            var message = "Falha ao listar estudantes. Erro: ";
+            Console.WriteLine(message + e);
+            throw;
+        }
     }
 
     public void UpdateStudent(Student student)
     {
-        var oldStudent = _repository.GetStudentById(student.Id);
-        if (oldStudent is null)
-            throw new Exception("Estudante não encontrado.");
-        
-        _repository.UpdateStudent(student);
+        try
+        {
+            var oldStudent = _repository.GetStudentById(student.Id);
+            if (oldStudent is null)
+                throw new Exception("Estudante não encontrado.");
+
+            _repository.UpdateStudent(student);
+        }
+        catch (Exception e)
+        {
+            var message = $"Falha ao atualizar estudante {student.Id}. Erro: ";
+            Console.WriteLine(message + e);
+            throw;
+        }
     }
 
     public void DeleteStudent(Student student)
     {
-        var oldStudent = _repository.GetStudentById(student.Id);
-        if (oldStudent is null)
-            throw new Exception("Estudante não encontrado.");
-        
-        _repository.DeleteStudent(student);
+        try
+        {
+            var oldStudent = _repository.GetStudentById(student.Id);
+            if (oldStudent is null)
+                throw new Exception("Estudante não encontrado.");
+
+            _repository.DeleteStudent(student);
+        }
+        catch (Exception e)
+        {
+            var message = $"Falha ao deletar estudante {student.Id}. Erro: ";
+            Console.WriteLine(message + e);
+            throw;
+        }
     }
 
     #endregion
