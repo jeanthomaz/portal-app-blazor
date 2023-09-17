@@ -61,37 +61,38 @@ public class Service : IService
         }
     }
 
-    public void UpdatePresentation(Presentation presentation)
+    public void UpdatePresentation(int presentationId)
     {
         try
         {
-            var oldPresentation = _repository.GetPresentationById(presentation.Id);
-            if (oldPresentation is null)
+            var presentation = _repository.GetPresentationById(presentationId);
+            if (presentation is null)
                 throw new Exception("Apresentação não encontrada.");
 
             _repository.UpdatePresentation(presentation);
         }
         catch (Exception e)
         {
-            var message = $"Falha ao atualizar apresentação {presentation.Id}. Erro: ";
+            var message = $"Falha ao atualizar apresentação {presentationId}. Erro: ";
             Console.WriteLine(message + e);
             throw;
         }
     }
 
-    public void DeletePresentation(Presentation presentation)
+    public void DeletePresentation(int presentationId)
     {
         try
         {
-            var oldPresentation = _repository.GetPresentationById(presentation.Id);
-            if (oldPresentation is null)
+            var oldPresentation = _repository.GetPresentationById(presentationId);
+            if (oldPresentation is null || oldPresentation.IsDeleted)
                 throw new Exception("Apresentação não encontrada.");
 
-            _repository.DeletePresentation(presentation);
+            oldPresentation.SoftDelete();
+            _repository.UpdatePresentation(oldPresentation);
         }
         catch (Exception e)
         {
-            var message = $"Falha ao deletar apresentação {presentation.Id}. Erro: ";
+            var message = $"Falha ao deletar apresentação {presentationId}. Erro: ";
             Console.WriteLine(message + e);
             throw;
         }
@@ -137,7 +138,11 @@ public class Service : IService
     {
         try
         {
-            return _repository.GetGroupById(id);
+            var group = _repository.GetGroupById(id);
+            if (group is null)
+                throw new Exception("Grupo não encontrado.");
+            
+            return group;
         }
         catch (Exception e)
         {
@@ -147,37 +152,38 @@ public class Service : IService
         }
     }
 
-    public void UpdateGroup(Group group)
+    public void UpdateGroup(int groupId)
     {
         try
         {
-            var oldGroup = _repository.GetGroupById(group.Id);
-            if (oldGroup is null)
+            var group = _repository.GetGroupById(groupId);
+            if (group is null)
                 throw new Exception("Grupo não encontrado.");
 
             _repository.UpdateGroup(group);
         }
         catch (Exception e)
         {
-            var message = $"Falha ao atualizar grupo {group.Id}. Erro: ";
+            var message = $"Falha ao atualizar grupo {groupId}. Erro: ";
             Console.WriteLine(message + e);
             throw;
         }
     }
 
-    public void DeleteGroup(Group group)
+    public void DeleteGroup(int groupId)
     {
         try
         {
-            var oldGroup = _repository.GetGroupById(group.Id);
+            var oldGroup = _repository.GetGroupById(groupId);
             if (oldGroup is null)
                 throw new Exception("Grupo não encontrado.");
 
-            _repository.DeleteGroup(group);
+            oldGroup.SoftDelete();
+            _repository.UpdateGroup(oldGroup);
         }
         catch (Exception e)
         {
-            var message = $"Falha ao deletar grupo {group.Id}. Erro: ";
+            var message = $"Falha ao deletar grupo {groupId}. Erro: ";
             Console.WriteLine(message + e);
             throw;
         }
@@ -220,37 +226,37 @@ public class Service : IService
         }
     }
 
-    public void UpdateStudent(Student student)
+    public void UpdateStudent(int studentId)
     {
         try
         {
-            var oldStudent = _repository.GetStudentById(student.Id);
-            if (oldStudent is null)
+            var student = _repository.GetStudentById(studentId);
+            if (student is null)
                 throw new Exception("Estudante não encontrado.");
 
             _repository.UpdateStudent(student);
         }
         catch (Exception e)
         {
-            var message = $"Falha ao atualizar estudante {student.Id}. Erro: ";
+            var message = $"Falha ao atualizar estudante {studentId}. Erro: ";
             Console.WriteLine(message + e);
             throw;
         }
     }
 
-    public void DeleteStudent(Student student)
+    public void DeleteStudent(int studentId)
     {
         try
         {
-            var oldStudent = _repository.GetStudentById(student.Id);
-            if (oldStudent is null)
+            var student = _repository.GetStudentById(studentId);
+            if (student is null)
                 throw new Exception("Estudante não encontrado.");
 
             _repository.DeleteStudent(student);
         }
         catch (Exception e)
         {
-            var message = $"Falha ao deletar estudante {student.Id}. Erro: ";
+            var message = $"Falha ao deletar estudante {studentId}. Erro: ";
             Console.WriteLine(message + e);
             throw;
         }

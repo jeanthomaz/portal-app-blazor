@@ -7,6 +7,7 @@
         public List<Student> GroupMembers { get; private set; } 
         public string Subject { get; private set; }
         public Guid PrivateKey { get; private set; }
+        public bool IsDeleted { get; private set; }
         private const int MaxGroupSize = 5;
 
         /// <summary>
@@ -43,5 +44,7 @@
 
             Presentations.Add(presentation);
         }
+        
+        public void SoftDelete() => IsDeleted = true;
     }
 }

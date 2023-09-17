@@ -17,6 +17,8 @@ public class Presentation
     /// Urls de refêrencia para o trabalho.
     /// </summary>
     public List<Url> References { get; private set; }
+    
+    public bool IsDeleted { get; private set; }
 
     /// <summary>
     /// Construtor pra ORM. Não deve ser utilizado em código.
@@ -33,4 +35,6 @@ public class Presentation
         Body = body;
         References = references;
     }
+    
+    public void SoftDelete() => IsDeleted = true;
 }

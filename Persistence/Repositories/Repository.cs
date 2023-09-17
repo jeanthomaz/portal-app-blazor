@@ -12,54 +12,54 @@ public class Repository : IRepository
         _context = context;
     }
 
-    public void AddPresentation(Presentation presentation)
-    {
-        throw new NotImplementedException();
-    }
-
     public List<Presentation> ListAllPresentations()
     {
-        throw new NotImplementedException();
+        return _context.Presentations.ToList();
     }
 
-    public Presentation GetPresentationById(int id)
+    public Presentation? GetPresentationById(int id)
     {
-        throw new NotImplementedException();
+        return _context.Presentations.FirstOrDefault(p => p.Id == id);
     }
 
     public void UpdatePresentation(Presentation presentation)
     {
-        throw new NotImplementedException();
+        _context.Presentations.Update(presentation);
+        _context.SaveChanges();
     }
 
     public void DeletePresentation(Presentation presentation)
     {
-        throw new NotImplementedException();
+        _context.Presentations.Remove(presentation);
+        _context.SaveChanges();
     }
 
     public void AddGroup(Group group)
     {
-        throw new NotImplementedException();
+        _context.Groups.Add(group);
+        _context.SaveChanges();
     }
 
     public List<Group> ListAllGroups()
     {
-        throw new NotImplementedException();
+        return _context.Groups.ToList();
     }
 
-    public Group GetGroupById(int id)
+    public Group? GetGroupById(int id)
     {
-        throw new NotImplementedException();
+        return _context.Groups.FirstOrDefault(g => g.Id == id);
     }
 
     public void UpdateGroup(Group group)
     {
-        throw new NotImplementedException();
+        _context.Groups.Update(group);
+        _context.SaveChanges();
     }
 
     public void DeleteGroup(Group group)
     {
-        throw new NotImplementedException();
+        _context.Groups.Remove(group);
+        _context.SaveChanges();
     }
 
     public void AddStudent(Student student)
