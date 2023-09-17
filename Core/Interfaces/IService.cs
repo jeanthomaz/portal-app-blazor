@@ -4,7 +4,7 @@ namespace Core.Interfaces;
 
 public interface IService
 {
-    public void AddPresentation(Presentation presentation);
+    public void AddPresentationInGroup(Presentation presentation, int groupId);
     public List<Presentation> ListAllPresentations();
     public Presentation GetPresentationById(int id);
     public void UpdatePresentation(Presentation presentation);

@@ -35,5 +35,13 @@
             
             GroupMembers.Add(student);
         }
+        
+        public void AddPresentation(Presentation presentation)
+        {
+            if (Presentations.Contains(presentation))
+                throw new Exception("Apresentação já está no grupo.");
+
+            Presentations.Add(presentation);
+        }
     }
 }
