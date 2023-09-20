@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Persistence;
 using System.Text;
-using Api.Service;
-using System;
 using Api;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Core.Interfaces;
+using Core.Services;
+using Persistence.Repositories;
 
 public class Program
 {
@@ -29,9 +26,8 @@ public class Program
         builder.Services.AddInfrastructureSwagger();
 
         // Registro do StudentService como Singleton
-        builder.Services.AddSingleton<StudentService>();
-        builder.Services.AddSingleton<GroupService>();
-        builder.Services.AddSingleton<PresentationService>();
+        builder.Services.AddSingleton<IService, Service>();
+        builder.Services.AddSingleton<IRepository, Repository>();
 
         // Configuração do Token JWT
         var configuration = builder.Configuration;
@@ -64,22 +60,8 @@ public class Program
         });
 
         var app = builder.Build();
+        
 
-        // Verifica se o StudentService está registrado como Singleton
-        var serviceProvider = app.Services;
-        var firstInstance = serviceProvider.GetService<StudentService>();
-        var secondInstance = serviceProvider.GetService<StudentService>();
-
-        bool isSingleton = Object.ReferenceEquals(firstInstance, secondInstance);
-
-        if (isSingleton)
-        {
-            Console.WriteLine("StudentService is registered as Singleton.");
-        }
-        else
-        {
-            Console.WriteLine("StudentService is not registered as Singleton.");
-        }
 
         app.MapControllers();
 

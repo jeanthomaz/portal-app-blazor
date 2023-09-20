@@ -1,22 +1,19 @@
 ﻿using Api.Models;
 using Core.Entities;
-using Microsoft.AspNetCore.Authorization;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Api.Service;
 
-namespace Api.Controllers
+namespace Api.Controller
 {
     [Route("api/groups")]
     [ApiController]
     public class GroupController : ControllerBase
     {
-        private List<Group> groups = new List<Group>();
-        private readonly GroupService groupService;
+        private readonly IService _service;
 
-        public GroupController(GroupService groupService)
+        public GroupController(IService service)
         {
-            this.groupService = groupService;
+            _service = service;
         }
 
         //[Authorize(Roles = "Admin")]
@@ -28,9 +25,9 @@ namespace Api.Controllers
                 return BadRequest("Dados do grupo inválidos");
             }
 
-            var newGroup = new Group(groupModel.Subject, groupModel.GroupMembers, new List<Presentation>(), createdByUserId: "admin");
+            var newGroup = new Group(groupModel.Subject, groupModel.GroupMembers, new List<Presentation>());
 
-            groupService.AddGroup(newGroup);
+            _service.AddGroup(newGroup);
             return Ok(newGroup); 
         }
     }

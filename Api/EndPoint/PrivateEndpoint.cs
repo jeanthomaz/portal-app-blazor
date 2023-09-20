@@ -1,8 +1,5 @@
-﻿using Core.Entities;
-using Microsoft.AspNetCore.Authorization;
+﻿using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Api.Service;
 
 namespace Api.Memoria
 {
@@ -10,25 +7,18 @@ namespace Api.Memoria
     [ApiController]
     public class ApiHandler : ControllerBase
     {
-        private readonly StudentService studentService;
-        private readonly GroupService groupService;
-        private readonly PresentationService presentationService;
+        private readonly IService _service;
 
-        public ApiHandler(
-            StudentService studentService,
-            GroupService groupService,
-            PresentationService presentationService)
+        public ApiHandler(IService service)
         {
-            this.studentService = studentService;
-            this.groupService = groupService;
-            this.presentationService = presentationService;
+            _service = service;
         }
 
         //[Authorize(Policy = "AdminPolicy")]
         [HttpGet("students")]
         public IActionResult ListStudents()
         {
-            var students = studentService.GetAllStudents();
+            var students = _service.ListAllStudents();
             return Ok(students);
         }
 
@@ -36,7 +26,7 @@ namespace Api.Memoria
         [HttpGet("groups")]
         public IActionResult ListGroups()
         {
-            var groups = groupService.GetAllGroups();
+            var groups = _service.ListAllGroups();
             return Ok(groups);
         }
 
@@ -44,7 +34,7 @@ namespace Api.Memoria
         [HttpGet("presentations")]
         public IActionResult ListPresentations()
         {
-            var presentations = presentationService.GetAllPresentations();
+            var presentations = _service.ListAllPresentations();
             return Ok(presentations);
         }
     }
