@@ -1,0 +1,15 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile.api
+    ports:
+      - "5002:8080"  # Mapeia a porta do contêiner para a porta do host
+
+  blazor-app:
+    build:
+      context: ./
+      dockerfile: Dockerfile.blazor
+    ports:
+      - "5003:80"    # Mapeia a porta do contêiner para a porta do host

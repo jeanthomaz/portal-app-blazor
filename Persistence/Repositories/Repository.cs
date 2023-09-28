@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories;
 
@@ -42,7 +43,8 @@ public class Repository : IRepository
 
     public List<Group> ListAllGroups()
     {
-        return _context.Groups.ToList();
+        var groups = _context.Groups.Include(g => g.GroupMembers).ToList();
+        return groups;
     }
 
     public Group? GetGroupById(int id)
