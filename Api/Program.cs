@@ -26,8 +26,8 @@ public class Program
         builder.Services.AddInfrastructureSwagger();
 
         // Registro do StudentService como Singleton
-        builder.Services.AddSingleton<IService, Service>();
-        builder.Services.AddSingleton<IRepository, Repository>();
+        builder.Services.AddScoped<IService, Service>();
+        builder.Services.AddScoped<IRepository, Repository>();
 
         // Configuração do Token JWT
         var configuration = builder.Configuration;
