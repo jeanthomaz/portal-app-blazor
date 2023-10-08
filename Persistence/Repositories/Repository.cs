@@ -1,6 +1,10 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Linq;
 
 namespace Persistence.Repositories;
 
@@ -41,13 +45,18 @@ public class Repository : IRepository
         _context.SaveChanges();
     }
 
+    public void AddStudent(Student student)
+    {
+        _context.Students.Add(student);
+        _context.SaveChanges();
+    }
     public List<Group> ListAllGroups()
     {
-        var groups = _context.Groups.Include(g => g.GroupMembers).ToList();
+        var groups = _context.Groups.ToList();
         return groups;
     }
 
-    public Group? GetGroupById(int id)
+    public Group GetGroupById(int id)
     {
         return _context.Groups.FirstOrDefault(g => g.Id == id);
     }
@@ -64,9 +73,10 @@ public class Repository : IRepository
         _context.SaveChanges();
     }
 
-    public void AddStudent(Student student)
+
+    public void AddPresentation(Presentation presentation)
     {
-        _context.Students.Add(student);
+        _context.Presentations.Add(presentation);
         _context.SaveChanges();
     }
 

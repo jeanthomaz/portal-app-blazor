@@ -23,7 +23,8 @@ public class Program
         // Injeta dependências (serviços)
         builder.Services.AddDbContext<ApplicationDbContext>();
         builder.Services.AddControllers();
-        builder.Services.AddInfrastructureSwagger();
+        builder.Services.AddInfrastructureSwagger();    
+         builder.Services.AddScoped<StudentService>();
 
         // Registro do StudentService como Singleton
         builder.Services.AddScoped<IService, Service>();

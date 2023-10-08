@@ -3,46 +3,46 @@
     public class Group
     {
         public int Id { get; private set; }
-        public List<Presentation> Presentations { get; private set; }
-        public List<Student> GroupMembers { get; private set; } 
         public string Subject { get; private set; }
         public Guid PrivateKey { get; private set; }
         public bool IsDeleted { get; private set; }
-        private const int MaxGroupSize = 5;
+        public List<Presentation> Presentations { get; set; }
+        public ICollection<Student> GroupMembers { get; set; }
 
         /// <summary>
         /// Construtor pra ORM. Não deve ser utilizado em código.
         /// </summary>
-        [Obsolete]
-        public Group()
-        {
-        }
 
-        public Group(string subject, List<Student> groupMembers, List<Presentation> presentations)
-        {
-            Subject = subject;
-            GroupMembers = groupMembers;
-            Presentations = presentations;
-            PrivateKey = Guid.NewGuid();
-        }
-        
         public void AddStudent(Student student)
         {
-            if (GroupMembers.Contains(student))
-                throw new Exception("Aluno já está no grupo.");
-
-            if (GroupMembers.Count == MaxGroupSize)
-                throw new Exception($"Grupo está cheio. O limite de {MaxGroupSize} alunos foi atingido.");
-            
-            GroupMembers.Add(student);
+            // Verifique se o estudante já não está no grupo
+            if (!GroupMembers.Contains(student))
+            {
+                // Adicione o estudante ao grupo
+                GroupMembers.Add(student);
+            }
         }
-        
         public void AddPresentation(Presentation presentation)
         {
-            if (Presentations.Contains(presentation))
-                throw new Exception("Apresentação já está no grupo.");
+            // Verifique se a apresentação já não está no grupo
+            if (!Presentations.Contains(presentation))
+            {
+                // Adicione a apresentação ao grupo
+                Presentations.Add(presentation);
+            }
+        }
 
-            Presentations.Add(presentation);
+
+        public Group()
+        {
+
+        }
+        public Group(string subject)
+        {
+            Subject = subject;
+            Presentations = new List<Presentation>();
+            PrivateKey = Guid.NewGuid();
+            GroupMembers = new List<Student>();
         }
         
         public void SoftDelete() => IsDeleted = true;

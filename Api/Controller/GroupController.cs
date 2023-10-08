@@ -16,19 +16,31 @@ namespace Api.Controller
             _service = service;
         }
 
-        //[Authorize(Roles = "Admin")]
-        [HttpPost]
-        public IActionResult CreateGroup([FromBody] GroupModel groupModel)
+        [HttpGet("{id}")]
+        public IActionResult GetGroup(int id)
         {
-            if (groupModel == null)
+            var group = _service.GetGroupById(id);
+
+            if (group == null)
             {
-                return BadRequest("Dados do grupo inválidos");
+                return NotFound("Grupo não encontrado");
             }
 
-            var newGroup = new Group(groupModel.Subject, groupModel.GroupMembers, new List<Presentation>());
+            return Ok(group);
+        }
+
+        [HttpPost]
+        public IActionResult CreateGroup([FromForm] GroupModel groupModel)
+        {
+            if (groupModel == null || string.IsNullOrWhiteSpace(groupModel.Subject))
+            {
+                return BadRequest("Nome do grupo inválido");
+            }
+
+            var newGroup = new Group(groupModel.Subject);
 
             _service.AddGroup(newGroup);
-            return Ok(newGroup); 
+            return Ok(newGroup);
         }
     }
 }

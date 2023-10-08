@@ -9,9 +9,9 @@ public interface IService
     public Presentation GetPresentationById(int id);
     public void UpdatePresentation(int presentationId);
     public void DeletePresentation(int presentationId);
-    
-    public void AddGroup(Group group);
+
     public List<Group> ListAllGroups();
+    public void AddGroup(Group group);
     public Group GetGroupById(int id);
     public void UpdateGroup(int groupId);
     public void DeleteGroup(int groupId);

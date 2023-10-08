@@ -4,20 +4,13 @@ public class Student
 {
     public int Id { get; private set; }
     
-    /// <summary>
-    /// Nome completo
-    /// </summary>
     public string Name { get; private set; }
 
-    /// <summary>
-    /// Papel no trabalho. Ex: "Desenvolvedor", "Analista", etc.
-    /// </summary>
     public string Role { get; private set; }
+    public int GroupId { get; set; } 
 
+    public Group Group { get; set; }
 
-    /// <summary>
-    /// Construtor pra ORM. Não deve ser utilizado em código.
-    /// </summary>
     [Obsolete]
     public Student()
     {
