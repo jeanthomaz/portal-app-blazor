@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Core.ValueObjects;
 
 namespace Core.Services;
 
@@ -12,255 +13,94 @@ public class Service : IService
         _repository = repository;
     }
 
-    #region Presentation Methods
 
-    public void AddPresentationInGroup(Presentation presentation, int groupId)
+    public async Task AddProjectAsync(Project project, Guid privateToken)
     {
-        try
-        {
-            var group = _repository.GetGroupById(groupId);
-            if (group is null)
-                throw new Exception("Grupo não encontrado.");
-            
-            group.AddPresentation(presentation);
-            _repository.UpdateGroup(group);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao adicionar apresentação '{presentation.Title}'. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        var existingProjects = await _repository.ListProjectsAsync();
+        
+        if (existingProjects.Any(p => p.Name == project.Name))
+            throw new Exception($"Já existe um projeto com o nome {project.Name}.");
+        
+        if (await TokenNotAvailable(privateToken))
+            throw new Exception($"Não foi possível usar o token {privateToken}.");
+        
+        project.AssignPrivateToken(privateToken);
+        
+        await _repository.AddProjectAsync(project);
     }
 
-    public List<Presentation> ListAllPresentations()
+    private async Task<bool> TokenNotAvailable(Guid privateToken)
     {
-        try
-        {
-            return _repository.ListAllPresentations();
-        }
-        catch (Exception e)
-        {
-            var message = "Falha ao listar apresentações. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        var allTokens = await _repository.ListTokensAsync();
+        
+        var token = allTokens.FirstOrDefault(t => t.Id == privateToken);
+        
+        if (token is null)
+            return true;
+        
+        if (token.ProjectId is not null)
+            return true;
+        
+        return false;
     }
 
-    public Presentation GetPresentationById(int id)
+    public async Task<Project> GetProjectByIdAsync(Guid id)
     {
-        try
-        {
-            return _repository.GetPresentationById(id);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao buscar apresentação {id}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        return await _repository.GetProjectByIdAsync(id);
     }
 
-    public void UpdatePresentation(int presentationId)
+    public async Task<List<Project>> ListProjectsAsync()
     {
-        try
-        {
-            var presentation = _repository.GetPresentationById(presentationId);
-            if (presentation is null)
-                throw new Exception("Apresentação não encontrada.");
-
-            _repository.UpdatePresentation(presentation);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao atualizar apresentação {presentationId}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        return await _repository.ListProjectsAsync();
     }
 
-    public void DeletePresentation(int presentationId)
+    public async Task UpdateProjectAsync(Project project, Guid privateToken)
     {
-        try
-        {
-            var oldPresentation = _repository.GetPresentationById(presentationId);
-            if (oldPresentation is null || oldPresentation.IsDeleted)
-                throw new Exception("Apresentação não encontrada.");
-
-            oldPresentation.SoftDelete();
-            _repository.UpdatePresentation(oldPresentation);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao deletar apresentação {presentationId}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        await _repository.UpdateProjectAsync(project);
     }
 
-    #endregion
-
-    #region Group Methods
-
-    public void AddGroup(Group group)
+    public async Task RemoveProjectAsync(Project project, Guid privateToken)
     {
-        try
-        {
-            var groupExists = _repository.ListAllGroups().Any(g => g.Subject == group.Subject);
-            if (groupExists)
-                throw new Exception("Um grupo com esse tema já existe.");
-            
-            _repository.AddGroup(group);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao adicionar grupo '{group.Subject}'. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        await _repository.RemoveProjectAsync(project);
     }
 
-    public List<Group> ListAllGroups()
+    public async Task AddStudentToProjectAsync(Student student, Guid privateToken)
     {
-        try
-        {
-            return _repository.ListAllGroups();
-        }
-        catch (Exception e)
-        {
-            var message = "Falha ao listar grupos. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        var project = await _repository.GetProjectByPrivateTokenAsync(privateToken);
+        project.Group.AddStudent(student);
+        
+        await _repository.UpdateProjectAsync(project);
     }
 
-    public Group GetGroupById(int id)
+    public async Task UpdateStudentAsync(Student student, Guid privateToken)
     {
-        try
-        {
-            var group = _repository.GetGroupById(id);
-            if (group is null)
-                throw new Exception("Grupo não encontrado.");
-            
-            return group;
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao buscar grupo {id}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        var project = await _repository.GetProjectByPrivateTokenAsync(privateToken);
+        project.Group.UpdateStudent(student);
+        
+        await _repository.UpdateProjectAsync(project);
     }
 
-    public void UpdateGroup(int groupId)
+    public async Task RemoveStudentAsync(Student student, Guid privateToken)
     {
-        try
-        {
-            var group = _repository.GetGroupById(groupId);
-            if (group is null)
-                throw new Exception("Grupo não encontrado.");
-
-            _repository.UpdateGroup(group);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao atualizar grupo {groupId}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        var project = await _repository.GetProjectByPrivateTokenAsync(privateToken);
+        project.Group.RemoveStudent(student);
+        
+        await _repository.UpdateProjectAsync(project);
     }
 
-    public void DeleteGroup(int groupId)
+    public async Task AddReferenceToProjectAsync(Url reference, Guid privateToken)
     {
-        try
-        {
-            var oldGroup = _repository.GetGroupById(groupId);
-            if (oldGroup is null)
-                throw new Exception("Grupo não encontrado.");
-
-            oldGroup.SoftDelete();
-            _repository.UpdateGroup(oldGroup);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao deletar grupo {groupId}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        var project = await _repository.GetProjectByPrivateTokenAsync(privateToken);
+        project.AddReference(reference);
+        
+        await _repository.UpdateProjectAsync(project);
     }
 
-    #endregion
-
-    #region Student Methods
-
-    public void AddStudentToGroup(Student student, int groupId)
+    public async Task RemoveReferenceFromProjectAsync(Url reference, Guid privateToken)
     {
-        try
-        {
-            var group = _repository.GetGroupById(groupId);
-            if (group is null)
-                throw new Exception("Grupo não encontrado.");
-            
-            group.AddStudent(student);
-            _repository.UpdateGroup(group);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao adicionar estudante {student.Name} ao grupo {groupId}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
+        var project = await _repository.GetProjectByPrivateTokenAsync(privateToken);
+        project.RemoveReference(reference);
+        
+        await _repository.UpdateProjectAsync(project);
     }
-
-    public List<Student> ListAllStudents()
-    {
-        try
-        {
-            return _repository.ListAllStudents();
-        }
-        catch (Exception e)
-        {
-            var message = "Falha ao listar estudantes. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
-    }
-
-    public void UpdateStudent(int studentId)
-    {
-        try
-        {
-            var student = _repository.GetStudentById(studentId);
-            if (student is null)
-                throw new Exception("Estudante não encontrado.");
-
-            _repository.UpdateStudent(student);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao atualizar estudante {studentId}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
-    }
-
-    public void DeleteStudent(int studentId)
-    {
-        try
-        {
-            var student = _repository.GetStudentById(studentId);
-            if (student is null)
-                throw new Exception("Estudante não encontrado.");
-
-            _repository.DeleteStudent(student);
-        }
-        catch (Exception e)
-        {
-            var message = $"Falha ao deletar estudante {studentId}. Erro: ";
-            Console.WriteLine(message + e);
-            throw;
-        }
-    }
-
-    #endregion
 }

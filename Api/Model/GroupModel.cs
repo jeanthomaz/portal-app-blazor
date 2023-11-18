@@ -9,5 +9,6 @@ namespace Api.Models
     public class GroupModel
     {
         public string Subject { get; set; }
+        public List<Student> GroupMembers { get; set; }
     }
 }
