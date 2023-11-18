@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Exceptions;
 using Core.Interfaces;
 using Core.ValueObjects;
 
@@ -12,7 +13,18 @@ public class Service : IService
     {
         _repository = repository;
     }
+    
+    public async Task<string> GenerateTokenAsync()
+    {
+        var token = new Token();
+        await _repository.AddTokenAsync(token);
+        return token.Id.ToString();
+    }
 
+    public async Task<List<Token>> ListTokensAsync()
+    {
+        return await _repository.ListTokensAsync();
+    }
 
     public async Task AddProjectAsync(Project project, Guid privateToken)
     {
@@ -22,7 +34,7 @@ public class Service : IService
             throw new Exception($"Já existe um projeto com o nome {project.Name}.");
         
         if (await TokenNotAvailable(privateToken))
-            throw new Exception($"Não foi possível usar o token {privateToken}.");
+            throw new UnavailableTokenException($"Não foi possível usar o token {privateToken}.");
         
         project.AssignPrivateToken(privateToken);
         
@@ -62,6 +74,15 @@ public class Service : IService
     public async Task RemoveProjectAsync(Project project, Guid privateToken)
     {
         await _repository.RemoveProjectAsync(project);
+        
+        var token = await _repository.ListTokensAsync();
+        var tokenToRemove = token.FirstOrDefault(t => t.Id == privateToken);
+        
+        if (tokenToRemove is not null)
+        {
+            tokenToRemove.ProjectId = null;
+            await _repository.UpdateTokenAsync(tokenToRemove);
+        }
     }
 
     public async Task AddStudentToProjectAsync(Student student, Guid privateToken)

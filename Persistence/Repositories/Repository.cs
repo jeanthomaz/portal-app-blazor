@@ -25,6 +25,19 @@ public class Repository : IRepository
         return await _context.Tokens.ToListAsync();
     }
 
+    public async Task UpdateTokenAsync(Token token)
+    {
+        var tokenToUpdate = await _context.Tokens.FirstOrDefaultAsync(t => t.Id == token.Id);
+        
+        if (tokenToUpdate is null)
+            throw new NotFoundExcecption($"Token com id {token.Id} não encontrado.");
+        
+        tokenToUpdate.ProjectId = token.ProjectId;
+        
+        _context.Tokens.Update(tokenToUpdate);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task AddProjectAsync(Project project)
     {
         await _context.Projects.AddAsync(project);
@@ -61,7 +74,8 @@ public class Repository : IRepository
     {
         return await _context.Projects
             .Where(p => !p.IsDeleted)
-            .Include(p => p.Group)
+            //s.Include(p => p.Group)
+            .Include(p => p.Group.GroupMembers)
             .Include(p => p.References)
             .ToListAsync();
     }

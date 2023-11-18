@@ -5,6 +5,9 @@ namespace Core.Interfaces;
 
 public interface IService
 {
+    public Task<string> GenerateTokenAsync();
+    public Task<List<Token>> ListTokensAsync();
+    
     public Task AddProjectAsync(Project project, Guid privateToken);
     public Task<Project> GetProjectByIdAsync(Guid id);
     public Task<List<Project>> ListProjectsAsync();

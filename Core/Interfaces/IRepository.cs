@@ -6,6 +6,7 @@ public interface IRepository
 {
     public Task AddTokenAsync(Token token);
     public Task<List<Token>> ListTokensAsync();
+    public Task UpdateTokenAsync(Token token);
     
     public Task AddProjectAsync(Project project);
     public Task<Project> GetProjectByIdAsync(Guid id);

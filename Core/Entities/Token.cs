@@ -3,7 +3,7 @@
 public class Token
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
-    public Guid? ProjectId { get; }
+    public Guid? ProjectId { get; set; }
     
     public Token()
     {

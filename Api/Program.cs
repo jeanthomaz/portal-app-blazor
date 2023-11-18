@@ -1,108 +1,121 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Persistence;
-using System.Text;
-using Api;
-using System.Security.Claims;
+using Api.Authentication;
+using Api.Reponses;
+using Core.DTOs;
+using Core.Entities;
+using Core.Exceptions;
 using Core.Interfaces;
 using Core.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using Persistence;
 using Persistence.Repositories;
 
-public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+// injeta dependências
+builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IService, Service>();
+
+// adiciona swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
 {
-    public static async Task Main(string[] args)
+    c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
     {
-        var tokenKey = "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"; // Sua chave secreta
-        var tokenIssuer = "http://localhost:7203"; // Seu emissor
-
-        var tokenGenerator = new Token(tokenKey, tokenIssuer);
-        var adminToken = tokenGenerator.GenerateAdminToken();
-
-        var builder = WebApplication.CreateBuilder(args);
-
-        // Injeta dependências (serviços)
-        builder.Services.AddDbContext<ApplicationDbContext>();
-        builder.Services.AddControllers();
-        builder.Services.AddInfrastructureSwagger();    
-         builder.Services.AddScoped<StudentService>();
-
-        // Registro do StudentService como Singleton
-        builder.Services.AddScoped<IService, Service>();
-        builder.Services.AddScoped<IRepository, Repository>();
-
-        // Configuração do Token JWT
-        var configuration = builder.Configuration;
-        var token = new Token(tokenKey, tokenIssuer); // Crie uma instância da classe Token
-        builder.Services.AddSingleton(token);
-
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                var configuration = builder.Configuration;
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
-                };
-            });
-
-        builder.Services.AddAuthorization(options =>
-        {
-            options.AddPolicy("AdminPolicy", policy =>
-            {
-                policy.RequireClaim(ClaimTypes.Role, "Admin"); // Exige que o usuário tenha a reivindicação de função "Admin"
-            });
-        });
-
-        var app = builder.Build();
-        
-
-
-        app.MapControllers();
-
-        // Configuração do Swagger
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minha API V1");
-            c.RoutePrefix = string.Empty;
-        });
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.Run();
-
-        MakeHttpRequestWithJwtToken(adminToken);
-    }
-
-    // Método para fazer solicitação HTTP com o token JWT
-    static async Task MakeHttpRequestWithJwtToken(string token)
+        Description = "Autenticação por chave de API",
+        Name = AuthConstants.ApiKeyHeaderName,
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "ApiKeyScheme"
+    });
+    
+    var scheme = new OpenApiSecurityScheme
     {
-        string apiUrl = "http://localhost:7203/api/students";
-
-        using (var httpClient = new HttpClient())
+        Reference = new OpenApiReference
         {
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Resposta do servidor:");
-                Console.WriteLine(content);
-            }
-            else
-            {
-                Console.WriteLine("Erro na solicitação HTTP: " + response.StatusCode);
-            }
+            Type = ReferenceType.SecurityScheme,
+            Id = "ApiKey"
         }
+    };
+    
+    var requirement = new OpenApiSecurityRequirement
+    {
+        { scheme, Array.Empty<string>() }
+    };
+    
+    c.AddSecurityRequirement(requirement);
+});
+
+var app = builder.Build();
+
+app.UseHttpsRedirection();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseMiddleware<ApiKeyAuthMiddleware>();
+
+app.MapGet("/api/v1/tokens", async (IService service) =>
+{
+    var tokens = await service.ListTokensAsync();
+    return tokens;
+}).WithTags("[Admin] Tokens");
+
+
+app.MapGet("/api/v1/generate-token", async (IService service) =>
+{
+    var token = await service.GenerateTokenAsync();
+
+    GenerateTokenResponse response = new() { Token = token };
+
+    return Results.Ok(response);
+}).WithTags("[Admin] Tokens");
+
+
+app.MapGet("/api/v1/projects", async (IService service) =>
+{
+    var projects = await service.ListProjectsAsync();
+    
+    var projectsDto = new List<ProjectDto>();
+    
+    foreach (var project in projects)
+    {
+        var projectDto = new ProjectDto
+        {
+            Name = project.Name,
+            Description = project.Description,
+            TextBody = project.TextBody,
+            References = project.References.Select(r => r.ToString()).ToList(),
+            Group = new GroupDto(project.Group)
+        };
+        
+        projectsDto.Add(projectDto);
     }
-}
+    
+    return projectsDto;
+});
+
+app.MapPost("/api/v1/create-project", async (HttpRequest request, IService service, ProjectDto projectDto) =>
+{
+    try
+    {
+        var project = projectDto.ToProject();
+        
+        var token = request.Headers[AuthConstants.ApiKeyHeaderName].ToString();
+        var tokenAsGuid = Guid.Parse(token);
+
+        await service.AddProjectAsync(project, tokenAsGuid);
+        return Results.Created($"/api/v1/projects/{project.Id}", project);
+    }
+    catch (Exception e)
+    {
+        if (e is UnavailableTokenException)
+            return Results.Problem(e.Message, statusCode: 403);
+        
+        Console.WriteLine(e);
+        return Results.StatusCode(500);
+    }
+});
+
+app.Run();
