@@ -47,7 +47,7 @@ public class Repository : IRepository
     public async Task<Project> GetProjectByIdAsync(Guid id)
     {
         var project = await _context.Projects
-            .Include(p => p.Group)
+            .Include(p => p.Group.GroupMembers)
             .Include(p => p.References)
             .FirstOrDefaultAsync(p => p.Id == id);
         

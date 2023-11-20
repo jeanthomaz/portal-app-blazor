@@ -19,5 +19,17 @@ public class ApplicationDbContext : DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=projeto_integrador;Username=postgres;Password=pass123");
+        => optionsBuilder.UseNpgsql(GetConnectionString());
+
+    private string? _connectionString;
+    private string GetConnectionString()
+    {
+        if (_connectionString == null)
+        {
+            var rdsConfig = new RdsConfig();
+            _connectionString = rdsConfig.GetConnectionString().Result;
+        }
+
+        return _connectionString;
+    }
 }

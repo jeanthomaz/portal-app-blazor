@@ -4,6 +4,7 @@ using Core.DTOs;
 using Core.Exceptions;
 using Core.Interfaces;
 using Core.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Repositories;
@@ -46,6 +47,20 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+void ApplyMigrations(ApplicationDbContext context)
+{
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    ApplyMigrations(context);
+}
 
 app.UseHttpsRedirection();
 

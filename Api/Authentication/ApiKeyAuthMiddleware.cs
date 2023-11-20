@@ -20,7 +20,7 @@ public class ApiKeyAuthMiddleware
             var adminToken = _configuration[AuthConstants.AdminApiToken];
             
             var tokens = await service.ListTokensAsync();
-            var token = tokens.FirstOrDefault(t => t.Id == apiKey);
+            var token = tokens.FirstOrDefault(t => t.Id.ToString() == apiKey);
             
             if (token is not null || apiKey == adminToken)
             {

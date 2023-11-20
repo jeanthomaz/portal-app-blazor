@@ -39,6 +39,7 @@ public class Service : IService
         project.AssignPrivateToken(privateToken);
         
         await _repository.AddProjectAsync(project);
+        await _repository.UpdateTokenAsync(new () {Id = privateToken, ProjectId = project.Id});
     }
 
     private async Task<bool> TokenNotAvailable(Guid privateToken)

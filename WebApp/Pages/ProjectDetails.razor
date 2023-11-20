@@ -12,8 +12,8 @@ else
 {
     <article class="container mt-5">
         <h1>@Project.Name</h1>
-        <p>@Project.Description</p>
-        <p>@Project.TextBody</p>
+        <h2>@Project.Description</h2>
+        <p style="white-space: pre-line;" class="text-justify">@Project.TextBody</p>
 
         <h2>Referências</h2>
         <ul>
@@ -47,8 +47,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var idAsGuid = Guid.Parse(Id);
-        Project = await Service.GetProjectByIdAsync(idAsGuid);
+        try
+        {
+            var idAsGuid = Guid.Parse(Id);
+            Project = await Service.GetProjectByIdAsync(idAsGuid);
+        }
+        catch (Exception e)
+        {
+            Project = null;
+        }
     }
 
 }
