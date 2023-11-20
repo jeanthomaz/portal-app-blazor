@@ -1,9 +1,40 @@
 ﻿@page "/"
+@using Core.Entities
+@inject Core.Interfaces.IService Service
 
-<PageTitle>Index</PageTitle>
+<div class="container mt-5">
+    <PageTitle>SI 2023</PageTitle>
+    
+    <h1 class="text-center">Projeto Integrador: Trabalhos do 4º período de SI - AEDB 2023</h1>
+    
+    <p class="text-center">O propósito desse portal é reunir os trabalhos da turma do 4º período de Sistemas de Informação das Faculdades Dom Bosco de 2023.</p>
+    
+    @if (_projects is null)
+    {
+        <p>
+            <em>Carregando...</em>
+        </p>
+    }
+    else
+    {
+        <div class="mt-4 d-flex flex-fill flex-wrap justify-content-center">
+        
+            @foreach (var project in _projects)
+            {
+                <ProjectCard Project="project"/>
+            }
+        </div>
+    }
+    
+</div>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+@code
+{
+    private List<Project>? _projects = new List<Project>();
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+    protected override async Task OnInitializedAsync()
+    {
+        _projects = await Service.ListProjectsAsync();
+    }
+}

@@ -1,11 +1,9 @@
 using Api.Authentication;
 using Api.Reponses;
 using Core.DTOs;
-using Core.Entities;
 using Core.Exceptions;
 using Core.Interfaces;
 using Core.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Repositories;
