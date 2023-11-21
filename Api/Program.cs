@@ -4,6 +4,8 @@ using Core.DTOs;
 using Core.Exceptions;
 using Core.Interfaces;
 using Core.Services;
+using Core.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
@@ -125,6 +127,96 @@ app.MapPost("/api/v1/create-project", async (HttpRequest request, IService servi
     {
         if (e is UnavailableTokenException)
             return Results.Problem(e.Message, statusCode: 403);
+        
+        Console.WriteLine(e);
+        return Results.StatusCode(500);
+    }
+});
+
+app.MapGet("/api/v1/projects/{id}", async (string id) =>
+{
+    try
+    {
+        var usingScope = app.Services.CreateScope();
+        var service = usingScope.ServiceProvider.GetRequiredService<IService>();
+        
+        var guid = Guid.Parse(id);
+        var project = await service.GetProjectByIdAsync(guid);
+        
+        var projectDto = new ProjectDto
+        {
+            Name = project.Name,
+            Description = project.Description,
+            TextBody = project.TextBody,
+            References = project.References.Select(r => r.ToString()).ToList(),
+            Group = new GroupDto(project.Group)
+        };
+        
+        return Results.Ok(projectDto);
+    }
+    catch (Exception e)
+    {
+        if (e is NotFoundExcecption)
+            return Results.NotFound(e.Message);
+        
+        Console.WriteLine(e);
+        return Results.StatusCode(500);
+    }
+});
+
+app.MapPut("/api/v1/projects/{id}", async (HttpRequest request, string id, IService service, ProjectDto projectDto) =>
+{
+    try
+    {
+        var guid = Guid.Parse(id);
+        var project = await service.GetProjectByIdAsync(guid);
+        
+        var token = request.Headers[AuthConstants.ApiKeyHeaderName].ToString();
+        var tokenAsGuid = Guid.Parse(token);
+        
+        if (project.PrivateToken != tokenAsGuid)
+            return Results.Forbid();
+        
+        project.Name = projectDto.Name;
+        project.Description = projectDto.Description;
+        project.TextBody = projectDto.TextBody;
+        project.References = projectDto.References.Select(r => new Url(r)).ToList();
+        
+        await service.UpdateProjectAsync(project, tokenAsGuid);
+        
+        return Results.Ok(project);
+    }
+    catch (Exception e)
+    {
+        if (e is NotFoundExcecption)
+            return Results.NotFound(e.Message);
+        
+        Console.WriteLine(e);
+        return Results.StatusCode(500);
+    }
+});
+
+app.MapDelete("/api/v1/projects/{id}", async (string id, IService service, HttpRequest request) =>
+{
+    try
+    {
+        var guid = Guid.Parse(id);
+        var project = await service.GetProjectByIdAsync(guid);
+        
+        var token = request.Headers[AuthConstants.ApiKeyHeaderName].ToString();
+        var tokenAsGuid = Guid.Parse(token);
+        
+        if (project.PrivateToken != tokenAsGuid)
+            return Results.Forbid();
+        
+        await service.RemoveProjectAsync(project, tokenAsGuid);
+        
+        return Results.Ok();
+    }
+    catch (Exception e)
+    {
+        if (e is NotFoundExcecption)
+            return Results.NotFound(e.Message);
         
         Console.WriteLine(e);
         return Results.StatusCode(500);

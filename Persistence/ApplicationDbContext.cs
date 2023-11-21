@@ -26,6 +26,10 @@ public class ApplicationDbContext : DbContext
     {
         if (_connectionString == null)
         {
+#if DEBUG
+            _connectionString = "Host=localhost;Port=5432;Database=projeto_integrador;Username=postgres;Password=pass123";
+            return _connectionString;
+#endif
             var rdsConfig = new RdsConfig();
             _connectionString = rdsConfig.GetConnectionString().Result;
         }
