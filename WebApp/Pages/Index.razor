@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using Core.Entities
+@inject Core.Interfaces.IService Service
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -11,48 +13,48 @@
     <header>
         <nav class="header__menu">
             <a class="header__menu__link" href="/">MENU</a>
-            <a class="header__menu__link" href="/group/portal">SOBRE O PORTAL</a>
+            <a class="header__menu__link" href="/group/portal">SOBRE O PORTAL</a>            
         </nav>
-    </header>
-    <main class="circulo">
+    </header>    
+    <main class="circulo">        
         <div class="circulo__menu">
             <div class="circulo__menu__linhas">
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupoabc"><img class="circulo__menu__linhas__itens__imagem" src="images/icon1.png" alt="icone grupo 1"></a>
+                    <a href="/group/@_listanomes[0]"><img class="circulo__menu__linhas__itens__imagem1" src="images/Ellipse.png" alt="icone grupo 1"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 1</p>
                 </div>
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupoxyz"><img class="circulo__menu__linhas__itens__imagem" src="images/icon2.png" alt="icone grupo 2"></a>
+                    <a href="/group/@_listanomes[1]"><img class="circulo__menu__linhas__itens__imagem2" src="images/Ellipse.png" alt="icone grupo 2"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 2</p>
                 </div>
             </div>
             <div class="circulo__menu__linhas-meio">
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupo3"><img class="circulo__menu__linhas__itens__imagem" src="images/icon3.png" alt="icone grupo 3"></a>
+                    <a href="/group/@_listanomes[2]"><img class="circulo__menu__linhas__itens__imagem3" src="images/Ellipse.png" alt="icone grupo 3"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 3</p>
                 </div>
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupo4"><img class="circulo__menu__linhas__itens__imagem" src="images/icon4.png" alt="icone grupo 4"></a>
+                    <a href="/group/@_listanomes[3]"><img class="circulo__menu__linhas__itens__imagem4" src="images/Ellipse.png" alt="icone grupo 4"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 4</p>
                 </div>
             </div>
             <div class="circulo__menu__linhas-meio">
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupo5"><img class="circulo__menu__linhas__itens__imagem" src="images/icon5.png" alt="icone grupo 5"></a>
+                    <a href="/group/@_listanomes[4]"><img class="circulo__menu__linhas__itens__imagem5" src="images/Ellipse.png" alt="icone grupo 5"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 5</p>
                 </div>
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupo6"><img class="circulo__menu__linhas__itens__imagem" src="images/icon6.png" alt="icone grupo 6"></a>
+                    <a href="/group/@_listanomes[5]"><img class="circulo__menu__linhas__itens__imagem6" src="images/Ellipse.png" alt="icone grupo 6"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 6</p>
                 </div>
             </div>
             <div class="circulo__menu__linhas">
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupo7"><img class="circulo__menu__linhas__itens__imagem" src="images/icon7.png" alt="icone grupo 7"></a>
+                    <a href="/group/@_listanomes[6]"><img class="circulo__menu__linhas__itens__imagem7" src="images/Ellipse.png" alt="icone grupo 7"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 7</p>
                 </div>
                 <div class="circulo__menu__linhas__itens">
-                    <a href="/group/grupo8"><img class="circulo__menu__linhas__itens__imagem" src="images/icon8.png" alt="icone grupo 8"></a>
+                    <a href="/group/@_listanomes[7]"><img class="circulo__menu__linhas__itens__imagem8" src="images/Ellipse.png" alt="icone grupo 8"></a>
                     <p class="circulo__menu__linhas__itens__nome">GRUPO 8</p>
                 </div>
             </div>
@@ -60,8 +62,30 @@
     </main>
     <footer>
         <p class="footer__texto">
-            Informações do Grupo
+            Portal de projetos
+            <br>
+            Danilo Florenzano, Jean Lucas, João Victor, Cauã Felipe, Lucas Leckar
         </p>
     </footer>
 </body>
 </html>
+
+
+@code   {
+
+    private List<Project>? oLista = new List<Project>();
+    List<string> _listanomes = [];
+
+    protected override async void OnInitialized()
+    {
+        oLista = await Service.ListProjectsAsync();
+        
+        foreach (Project p in oLista)
+        {
+            if (p.Name.Replace(" ", "").ToLower() != "portal")
+            {
+                _listanomes.Add(p.Name);
+            }
+        }
+    }
+}

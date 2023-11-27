@@ -5,9 +5,11 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\Persistence\Persistence.csproj" />
     </ItemGroup>
 

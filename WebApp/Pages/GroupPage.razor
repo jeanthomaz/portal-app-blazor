@@ -1,42 +1,53 @@
 ﻿@page "/group/{groupReference}"
+@using Core.Entities
+@inject Core.Interfaces.IService Service
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@oGrupo.Nome</title>    
+    <title>@oProject.Name</title>    
 </head>
 <body class="group__body">
     <header class="group__header">
         <nav class="header__menu">
-            <a class="header__menu__link" href="/">MENU</a>
-            <a class="header__menu__link" href="/group/portal">SOBRE O PORTAL</a>
+            <a class="header__menu__link" href="/">MENU</a>            
         </nav>
     </header>
     <main class="grupo">
         <div class="grupo__conteudo">
             <div class="grupo__conteudo__info">
                 <section class="grupo__conteudo__info__descricao">
-                    <h1 class="page__titulo">@oGrupo.Nome</h1>
-                    <p class="page__descricao">@oGrupo.Descricao</p>
+                    <h1 class="page__titulo">@oProject.Name</h1>
+                    <h2 class="page__subtitulo">@oProject.Description</h2>
+                    <p class ="page__descricao">@oProject.TextBody</p>
                 </section>
                 <section class="grupo__conteudo__info__integrantes">
                     <h1 class="page__titulo">Integrantes</h1>
                     <ul class="page__lista">
-                        @foreach (string membro in oGrupo.ListaMembros)
+                        @foreach (Student membro in oProject.Group.GroupMembers)
                         {
-                            <li>- @membro</li>
+                            <li>@membro.Name - @membro.Role</li>
                         }                       
                     </ul>                    
                 </section>
+                <section class="grupo__conteudo__info__integrantes"> 
+                    <h1 class="page__titulo">Referências</h1>
+                    <ul class="page__lista">
+                        @foreach (Url link in oProject.References)
+                        {
+                            <li class="referencia"><a href="@link.ToString()">@link.ToString()</a></li>
+                        }
+                    </ul>
+                </section>
             </div>
-            <div class="grupo__conteudo__visual">
+            @* <div class="grupo__conteudo__visual">
                 <img class="grupo__conteudo__visual__imagem" src="images/GroupImage.png" alt="imagem do grupo">
                 <a class="grupo__conteudo__visual__botao" href="@oGrupo.Link">VER PROJETO</a>
-            </div>
+            </div> *@
         </div>
-        <div class="grupo__posts">
+        @* <div class="grupo__posts">
             @foreach (Post oPost in oGrupo.ListaPosts)
             {
                 <section class="grupo__posts__post">
@@ -44,11 +55,13 @@
                     <p class="grupo__posts__post__texto">@oPost.Texto</p>
                 </section>
             }                        
-        </div>
+        </div> *@
     </main>
     <footer>
         <p class="footer__texto">
-            Informações do Grupo
+            Portal de projetos
+            <br>
+            Danilo Florenzano, Jean Lucas, João Victor, Cauã Felipe, Lucas Leckar
         </p>
     </footer>
 </body>
@@ -60,81 +73,21 @@
     [Parameter]
     public string GroupReference { get; set; }
 
-    List<Group> ExListaGrupos = new List<Group>();
+    Project oProject;
 
-    Group? oGrupo;
+    private List<Project>? oLista = new List<Project>();   
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         GroupReference = GroupReference.Replace(" ", "").ToLower() ?? "portal";
 
-        ExListaGrupos = CriarExemplo();
-
-        foreach (Group exGrupo in ExListaGrupos)
+        oLista = await Service.ListProjectsAsync();        
+        foreach (Project p in oLista)
         {
-            if (exGrupo.Nome.Replace(" ", "").ToLower() == GroupReference)
+            if (p.Name.Replace(" ", "").ToLower() == GroupReference)
             {
-                oGrupo = exGrupo;                
-                break;
-            }
-            else
-            {
-
-            }
+                oProject = p;
+            }            
         }
-    }
-
-    public List<Group> CriarExemplo()
-    {
-        List<Group> ExListaGrupos = new List<Group>();
-        Group ExGrupo = new();        
-        List<string> ExListaMembros = new();
-        List<Post> ExListaPosts = new();
-        
-        ExGrupo.Nome = "Grupo ABC";
-        ExGrupo.Descricao = "Nosso trabalho é sobre piririn pururun...";
-        ExListaMembros.Add("Bernardo");
-        ExListaMembros.Add("Dahlia");
-        ExListaMembros.Add("Saymon");
-        ExGrupo.ListaMembros = ExListaMembros;
-        ExGrupo.Link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-        Post ExPost1 = new();
-        ExPost1.Titulo = "Post 1";
-        ExPost1.Texto = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sollicitudin ac orci phasellus egestas tellus rutrum.";
-        ExListaPosts.Add(ExPost1);
-        Post ExPost2 = new();
-        ExPost2.Titulo = "Post 2";
-        ExPost2.Texto = "blandit aliquam etiam erat velit scelerisque in.";
-        ExListaPosts.Add(ExPost2);
-        Post ExPost3 = new();
-        ExPost3.Titulo = "Post 3";
-        ExPost3.Texto = "Venenatis tellus in metus vulputate eu. Mauris cursus mattis molestie a iaculis. Nec nam aliquam sem et tortor consequat id porta. Nulla pharetra diam sit amet nisl suscipit adipiscing. Vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam. Augue mauris augue neque gravida in fermentum et sollicitudin. Quis commodo odio aenean sed adipiscing diam donec. Euismod quis viverra nibh cras pulvinar mattis. Magnis dis parturient montes nascetur. Amet purus gravida quis blandit turpis cursus. Sed libero enim sed faucibus turpis in eu. Amet dictum sit amet justo. Sed turpis tincidunt id aliquet risus. Ac orci phasellus egestas tellus rutrum tellus pellentesque eu. Hendrerit gravida rutrum quisque non tellus. Vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Enim nec dui nunc mattis enim ut tellus. At tellus at urna condimentum mattis pellentesque id. Amet nisl purus in mollis nunc sed id. Tellus rutrum tellus pellentesque eu tincidunt.";
-        ExListaPosts.Add(ExPost3);
-        ExGrupo.ListaPosts = ExListaPosts;
-        ExListaGrupos.Add(ExGrupo);
-
-        Group ExGrupo2 = new();
-        List<string> ExListaMembros2 = new();
-        List<Post> ExListaPosts2 = new();
-        
-        ExGrupo2.Nome = "Grupo XYZ";
-        ExGrupo2.Descricao = "O trabalho do nosso grupo retrara como abablu abuble...";
-        ExListaMembros2.Add("Samantha");
-        ExListaMembros2.Add("Felipe");
-        ExListaMembros2.Add("Celine");
-        ExGrupo2.ListaMembros = ExListaMembros2;
-        ExGrupo2.Link = "https://www.youtube.com/watch?v=_CQ_ehoRfsE";
-        Post ExPost4 = new();
-        ExPost4.Titulo = "Post 1";
-        ExPost4.Texto = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras pulvinar mattis nunc sed. Magna etiam tempor orci eu lobortis elementum nibh tellus molestie. Leo a diam sollicitudin tempor id eu nisl. Vitae elementum curabitur vitae nunc sed velit. Pharetra vel turpis nunc eget lorem dolor sed viverra ipsum. Nam libero justo laoreet sit. Potenti nullam ac tortor vitae purus. Lacinia quis vel eros donec ac odio tempor orci dapibus. Lacus laoreet non curabitur gravida arcu ac tortor dignissim convallis. Duis at consectetur lorem donec. Sit amet venenatis urna cursus eget nunc scelerisque. Sed felis eget velit aliquet sagittis.";
-        ExListaPosts2.Add(ExPost4);
-        Post ExPost5 = new();
-        ExPost5.Titulo = "Post 2";
-        ExPost5.Texto = "Commodo sed egestas egestas fringilla phasellus faucibus scelerisque eleifend.";
-        ExListaPosts2.Add(ExPost5);
-        ExGrupo2.ListaPosts = ExListaPosts2;
-        ExListaGrupos.Add(ExGrupo2);
-
-        return ExListaGrupos;
-    }
+    }    
 }
