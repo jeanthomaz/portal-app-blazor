@@ -7,21 +7,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@oProject.Name</title>    
 </head>
 <body class="group__body">
-    <header class="group__header">
-        <nav class="header__menu">
-            <a class="header__menu__link" href="/">MENU</a>            
-        </nav>
-    </header>
+<header class="group__header">
+    <nav class="header__menu">
+        <a class="header__menu__link" href="/">MENU</a>
+    </nav>
+</header>
+
+@if (oProject is not null)
+{
     <main class="grupo">
         <div class="grupo__conteudo">
             <div class="grupo__conteudo__info">
                 <section class="grupo__conteudo__info__descricao">
                     <h1 class="page__titulo">@oProject.Name</h1>
                     <h2 class="page__subtitulo">@oProject.Description</h2>
-                    <p class ="page__descricao">@oProject.TextBody</p>
+                    <p class="page__descricao">@oProject.TextBody</p>
                 </section>
                 <section class="grupo__conteudo__info__integrantes">
                     <h1 class="page__titulo">Integrantes</h1>
@@ -29,15 +31,17 @@
                         @foreach (Student membro in oProject.Group.GroupMembers)
                         {
                             <li>@membro.Name - @membro.Role</li>
-                        }                       
-                    </ul>                    
+                        }
+                    </ul>
                 </section>
-                <section class="grupo__conteudo__info__integrantes"> 
+                <section class="grupo__conteudo__info__integrantes">
                     <h1 class="page__titulo">Referências</h1>
                     <ul class="page__lista">
                         @foreach (Url link in oProject.References)
                         {
-                            <li class="referencia"><a href="@link.ToString()">@link.ToString()</a></li>
+                            <li class="referencia">
+                                <a href="@link.ToString()">@link.ToString()</a>
+                            </li>
                         }
                     </ul>
                 </section>
@@ -57,13 +61,14 @@
             }                        
         </div> *@
     </main>
-    <footer>
-        <p class="footer__texto">
-            Portal de projetos
-            <br>
-            Danilo Florenzano, Jean Lucas, João Victor, Cauã Felipe, Lucas Leckar
-        </p>
-    </footer>
+}
+<footer>
+    <p class="footer__texto">
+        Portal de projetos
+        <br>
+        Danilo Florenzano, Jean Lucas, João Victor, Cauã Felipe, Lucas Leckar
+    </p>
+</footer>
 </body>
 </html>
 
@@ -75,19 +80,21 @@
 
     Project oProject;
 
-    private List<Project>? oLista = new List<Project>();   
+    private List<Project>? oLista = new List<Project>();
 
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        GroupReference = GroupReference.Replace(" ", "").ToLower() ?? "portal";
+        GroupReference = GroupReference.Replace(" ", "-").ToLower();
 
-        oLista = await Service.ListProjectsAsync();        
+        oLista = await Service.ListProjectsAsync();
         foreach (Project p in oLista)
         {
-            if (p.Name.Replace(" ", "").ToLower() == GroupReference)
+            if (p.Name.Replace(" ", "-").ToLower() == GroupReference)
             {
                 oProject = p;
-            }            
+                break;
+            }
         }
-    }    
+    }
+
 }

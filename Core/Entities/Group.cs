@@ -3,7 +3,7 @@
     public class Group
     {
         public int Id { get; private set; }
-        public ICollection<Student> GroupMembers { get; set; }
+        public List<Student> GroupMembers { get; set; }
 
         /// <summary>
         /// Construtor pra ORM. Não deve ser utilizado em código.

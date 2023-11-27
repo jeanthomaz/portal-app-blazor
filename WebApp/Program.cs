@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Persistence;
 using Persistence.Repositories;
-using WebApp.Class;
 
 var builder = WebApplication.CreateBuilder(args);
 
