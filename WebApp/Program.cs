@@ -1,18 +1,20 @@
 using Core.Interfaces;
+using Core.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Persistence;
 using Persistence.Repositories;
-using WebApp.Data;
+using WebApp.Class;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IService, Service>();
+//builder.Services.AddScoped<IService, Exemplo>();
 
 var app = builder.Build();
 

@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{904E727C-3C5B-45AE-8966-E03235D32DB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{F57601C8-5104-4E95-B225-03C37CA98C0E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{5F95F067-EE30-4139-AC69-6CE7899E79F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{804A165E-C338-413F-A82C-235DCE903A76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,13 +28,13 @@ Global
 		{904E727C-3C5B-45AE-8966-E03235D32DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{904E727C-3C5B-45AE-8966-E03235D32DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{904E727C-3C5B-45AE-8966-E03235D32DB9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F57601C8-5104-4E95-B225-03C37CA98C0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F57601C8-5104-4E95-B225-03C37CA98C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F57601C8-5104-4E95-B225-03C37CA98C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F57601C8-5104-4E95-B225-03C37CA98C0E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5F95F067-EE30-4139-AC69-6CE7899E79F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F95F067-EE30-4139-AC69-6CE7899E79F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F95F067-EE30-4139-AC69-6CE7899E79F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F95F067-EE30-4139-AC69-6CE7899E79F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{804A165E-C338-413F-A82C-235DCE903A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{804A165E-C338-413F-A82C-235DCE903A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{804A165E-C338-413F-A82C-235DCE903A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{804A165E-C338-413F-A82C-235DCE903A76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

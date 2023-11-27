@@ -4,19 +4,14 @@ namespace Core.Interfaces;
 
 public interface IRepository
 {
-    public void AddGroup(Group group);
-    public List<Group> ListAllGroups();
-    public Group? GetGroupById(int id); 
-    public void UpdateGroup(Group group);
-    void AddPresentation(Presentation presentation);
-
-    public List<Presentation> ListAllPresentations();
-    public Presentation? GetPresentationById(int id);
-    public void UpdatePresentation(Presentation presentation);
+    public Task AddTokenAsync(Token token);
+    public Task<List<Token>> ListTokensAsync();
+    public Task UpdateTokenAsync(Token token);
     
-    public void AddStudent(Student student);
-    public Student? GetStudentById(int id);
-    public List<Student> ListAllStudents();
-    public void UpdateStudent(Student student);
-    public void DeleteStudent(Student student);
+    public Task AddProjectAsync(Project project);
+    public Task<Project> GetProjectByIdAsync(Guid id);
+    public Task<Project> GetProjectByPrivateTokenAsync(Guid privateToken);
+    public Task<List<Project>> ListProjectsAsync();
+    public Task UpdateProjectAsync(Project project);
+    public Task RemoveProjectAsync(Project project);
 }

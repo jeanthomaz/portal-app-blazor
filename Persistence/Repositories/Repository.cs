@@ -1,10 +1,7 @@
 ﻿using Core.Entities;
+using Core.Exceptions;
 using Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Linq;
 
 namespace Persistence.Repositories;
 
@@ -17,88 +14,132 @@ public class Repository : IRepository
         _context = context;
     }
 
-    public List<Presentation> ListAllPresentations()
+    public async Task AddTokenAsync(Token token)
     {
-        return _context.Presentations.ToList();
+        await _context.Tokens.AddAsync(token);
+        await _context.SaveChangesAsync();
     }
 
-    public Presentation? GetPresentationById(int id)
+    public async Task<List<Token>> ListTokensAsync()
     {
-        return _context.Presentations.FirstOrDefault(p => p.Id == id);
+        return await _context.Tokens.ToListAsync();
     }
 
-    public void UpdatePresentation(Presentation presentation)
+    public async Task UpdateTokenAsync(Token token)
     {
-        _context.Presentations.Update(presentation);
-        _context.SaveChanges();
+        var tokenToUpdate = await _context.Tokens.FirstOrDefaultAsync(t => t.Id == token.Id);
+        
+        if (tokenToUpdate is null)
+            throw new NotFoundExcecption($"Token com id {token.Id} não encontrado.");
+        
+        tokenToUpdate.ProjectId = token.ProjectId;
+        
+        _context.Tokens.Update(tokenToUpdate);
+        await _context.SaveChangesAsync();
     }
 
-    public void DeletePresentation(Presentation presentation)
+    public async Task AddProjectAsync(Project project)
     {
-        _context.Presentations.Remove(presentation);
-        _context.SaveChanges();
+        await _context.Projects.AddAsync(project);
+        await _context.SaveChangesAsync();
     }
 
-    public void AddGroup(Group group)
+    public async Task<Project> GetProjectByIdAsync(Guid id)
     {
-        _context.Groups.Add(group);
-        _context.SaveChanges();
+        var project = await _context.Projects
+            .Include(p => p.Group.GroupMembers)
+            .Include(p => p.References)
+            .FirstOrDefaultAsync(p => p.Id == id);
+        
+        if (project is null || project.IsDeleted)
+            throw new NotFoundExcecption($"Projeto com id {id} não encontrado.");
+        
+        return project;
     }
 
-    public void AddStudent(Student student)
+    public async Task<Project> GetProjectByPrivateTokenAsync(Guid privateToken)
     {
-        _context.Students.Add(student);
-        _context.SaveChanges();
-    }
-    public List<Group> ListAllGroups()
-    {
-        var groups = _context.Groups.ToList();
-        return groups;
-    }
-
-    public Group GetGroupById(int id)
-    {
-        return _context.Groups.FirstOrDefault(g => g.Id == id);
+        var project = await _context.Projects
+            .Include(p => p.Group)
+            .Include(p => p.References)
+            .FirstOrDefaultAsync(p => p.PrivateToken == privateToken);
+        
+        if (project is null || project.IsDeleted)
+            throw new NotFoundExcecption($"Projeto com token {privateToken} não encontrado.");
+        
+        return project;
     }
 
-    public void UpdateGroup(Group group)
+    public async Task<List<Project>> ListProjectsAsync()
     {
-        _context.Groups.Update(group);
-        _context.SaveChanges();
+        return await _context.Projects
+            .Where(p => !p.IsDeleted)
+            //s.Include(p => p.Group)
+            .Include(p => p.Group.GroupMembers)
+            .Include(p => p.References)
+            .ToListAsync();
     }
 
-    public void DeleteGroup(Group group)
+    public async Task UpdateProjectAsync(Project project)
     {
-        _context.Groups.Remove(group);
-        _context.SaveChanges();
+        var projectToUpdate = await _context.Projects
+            .Include(p => p.Group)
+            .Include(p => p.References)
+            .FirstOrDefaultAsync(p => p.Id == project.Id);
+        
+        if (projectToUpdate is null || projectToUpdate.IsDeleted)
+            throw new NotFoundExcecption($"Projeto com id {project.Id} não encontrado.");
+        
+        projectToUpdate.Name = project.Name;
+        projectToUpdate.Description = project.Description;
+        projectToUpdate.TextBody = project.TextBody;
+        projectToUpdate.References = project.References;
+        projectToUpdate.Group = project.Group;
+        
+        _context.Projects.Update(projectToUpdate);
+        await _context.SaveChangesAsync();
     }
 
-
-    public void AddPresentation(Presentation presentation)
+    public async Task RemoveProjectAsync(Project project)
     {
-        _context.Presentations.Add(presentation);
-        _context.SaveChanges();
+        var projectToRemove = await _context.Projects
+            .Include(p => p.Group)
+            .Include(p => p.References)
+            .FirstOrDefaultAsync(p => p.Id == project.Id);
+        
+        if (projectToRemove is null || project.IsDeleted)
+            throw new NotFoundExcecption($"Projeto com id {project.Id} não encontrado.");
+        
+        projectToRemove.IsDeleted = true;
+        
+        _context.Projects.Update(projectToRemove);
+        await _context.SaveChangesAsync();
     }
 
-    public Student? GetStudentById(int id)
+    public async Task UpdateStudentAsync(Student student)
     {
-        return _context.Students.FirstOrDefault(s => s.Id == id);
+        var studentToUpdate = await _context.Students
+            .FirstOrDefaultAsync(s => s.Id == student.Id);
+        
+        if (studentToUpdate is null)
+            throw new NotFoundExcecption($"Estudante com id {student.Id} não encontrado.");
+        
+        studentToUpdate.Name = student.Name;
+        studentToUpdate.Role = student.Role;
+        
+        _context.Students.Update(studentToUpdate);
+        await _context.SaveChangesAsync();
     }
 
-    public List<Student> ListAllStudents()
+    public async Task RemoveStudentAsync(Student student)
     {
-        return _context.Students.ToList();
-    }
-
-    public void UpdateStudent(Student student)
-    {
-        _context.Students.Update(student);
-        _context.SaveChanges();
-    }
-
-    public void DeleteStudent(Student student)
-    {
-        _context.Students.Remove(student);
-        _context.SaveChanges();
+        var studentToRemove = await _context.Students
+            .FirstOrDefaultAsync(s => s.Id == student.Id);
+        
+        if (studentToRemove is null)
+            throw new NotFoundExcecption($"Estudante com id {student.Id} não encontrado.");
+        
+        _context.Students.Remove(studentToRemove);
+        await _context.SaveChangesAsync();
     }
 }

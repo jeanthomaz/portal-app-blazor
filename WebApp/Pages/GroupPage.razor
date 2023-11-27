@@ -1,0 +1,93 @@
+﻿@page "/group/{groupReference}"
+@using Core.Entities
+@inject Core.Interfaces.IService Service
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@oProject.Name</title>    
+</head>
+<body class="group__body">
+    <header class="group__header">
+        <nav class="header__menu">
+            <a class="header__menu__link" href="/">MENU</a>            
+        </nav>
+    </header>
+    <main class="grupo">
+        <div class="grupo__conteudo">
+            <div class="grupo__conteudo__info">
+                <section class="grupo__conteudo__info__descricao">
+                    <h1 class="page__titulo">@oProject.Name</h1>
+                    <h2 class="page__subtitulo">@oProject.Description</h2>
+                    <p class ="page__descricao">@oProject.TextBody</p>
+                </section>
+                <section class="grupo__conteudo__info__integrantes">
+                    <h1 class="page__titulo">Integrantes</h1>
+                    <ul class="page__lista">
+                        @foreach (Student membro in oProject.Group.GroupMembers)
+                        {
+                            <li>@membro.Name - @membro.Role</li>
+                        }                       
+                    </ul>                    
+                </section>
+                <section class="grupo__conteudo__info__integrantes"> 
+                    <h1 class="page__titulo">Referências</h1>
+                    <ul class="page__lista">
+                        @foreach (Url link in oProject.References)
+                        {
+                            <li class="referencia"><a href="@link.ToString()">@link.ToString()</a></li>
+                        }
+                    </ul>
+                </section>
+            </div>
+            @* <div class="grupo__conteudo__visual">
+                <img class="grupo__conteudo__visual__imagem" src="images/GroupImage.png" alt="imagem do grupo">
+                <a class="grupo__conteudo__visual__botao" href="@oGrupo.Link">VER PROJETO</a>
+            </div> *@
+        </div>
+        @* <div class="grupo__posts">
+            @foreach (Post oPost in oGrupo.ListaPosts)
+            {
+                <section class="grupo__posts__post">
+                    <h3 class="grupo__posts__post__titulo">@oPost.Titulo</h3>
+                    <p class="grupo__posts__post__texto">@oPost.Texto</p>
+                </section>
+            }                        
+        </div> *@
+    </main>
+    <footer>
+        <p class="footer__texto">
+            Portal de projetos
+            <br>
+            Danilo Florenzano, Jean Lucas, João Victor, Cauã Felipe, Lucas Leckar
+        </p>
+    </footer>
+</body>
+</html>
+
+
+@code {
+
+    [Parameter]
+    public string GroupReference { get; set; }
+
+    Project oProject;
+
+    private List<Project>? oLista = new List<Project>();   
+
+    protected override async void OnInitialized()
+    {
+        GroupReference = GroupReference.Replace(" ", "").ToLower() ?? "portal";
+
+        oLista = await Service.ListProjectsAsync();        
+        foreach (Project p in oLista)
+        {
+            if (p.Name.Replace(" ", "").ToLower() == GroupReference)
+            {
+                oProject = p;
+            }            
+        }
+    }    
+}

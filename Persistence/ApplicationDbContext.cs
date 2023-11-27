@@ -1,27 +1,39 @@
 ﻿using Core.Entities;
-using Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<Presentation> Presentations { get; set; }
+    public DbSet<Project> Projects { get; set; }
     public DbSet<Student> Students { get; set; }
     public DbSet<Group> Groups { get; set; }
-
+    public DbSet<Token> Tokens { get; set; }
+    
     public ApplicationDbContext()
     {
     }
-
-
+    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlite($"Data Source={GetDatabasePath()};");
+        => optionsBuilder.UseNpgsql(GetConnectionString());
 
-    private string GetDatabasePath()
-        => Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())!.FullName, "Persistence/mydb.db");
+    private string? _connectionString;
+    private string GetConnectionString()
+    {
+        if (_connectionString == null)
+        {
+#if DEBUG
+            _connectionString = "Host=localhost;Port=5432;Database=projeto_integrador;Username=postgres;Password=pass123";
+            return _connectionString;
+#endif
+            var rdsConfig = new RdsConfig();
+            _connectionString = rdsConfig.GetConnectionString().Result;
+        }
+
+        return _connectionString;
+    }
 }

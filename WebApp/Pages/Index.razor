@@ -1,9 +1,91 @@
 ﻿@page "/"
+@using Core.Entities
+@inject Core.Interfaces.IService Service
 
-<PageTitle>Index</PageTitle>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>    
+</head>
+<body>
+    <header>
+        <nav class="header__menu">
+            <a class="header__menu__link" href="/">MENU</a>
+            <a class="header__menu__link" href="/group/portal">SOBRE O PORTAL</a>            
+        </nav>
+    </header>    
+    <main class="circulo">        
+        <div class="circulo__menu">
+            <div class="circulo__menu__linhas">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[0]"><img class="circulo__menu__linhas__itens__imagem1" src="images/Ellipse.png" alt="icone grupo 1"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 1</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[1]"><img class="circulo__menu__linhas__itens__imagem2" src="images/Ellipse.png" alt="icone grupo 2"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 2</p>
+                </div>
+            </div>
+            <div class="circulo__menu__linhas-meio">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[2]"><img class="circulo__menu__linhas__itens__imagem3" src="images/Ellipse.png" alt="icone grupo 3"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 3</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[3]"><img class="circulo__menu__linhas__itens__imagem4" src="images/Ellipse.png" alt="icone grupo 4"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 4</p>
+                </div>
+            </div>
+            <div class="circulo__menu__linhas-meio">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[4]"><img class="circulo__menu__linhas__itens__imagem5" src="images/Ellipse.png" alt="icone grupo 5"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 5</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[5]"><img class="circulo__menu__linhas__itens__imagem6" src="images/Ellipse.png" alt="icone grupo 6"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 6</p>
+                </div>
+            </div>
+            <div class="circulo__menu__linhas">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[6]"><img class="circulo__menu__linhas__itens__imagem7" src="images/Ellipse.png" alt="icone grupo 7"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 7</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/@_listanomes[7]"><img class="circulo__menu__linhas__itens__imagem8" src="images/Ellipse.png" alt="icone grupo 8"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 8</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p class="footer__texto">
+            Portal de projetos
+            <br>
+            Danilo Florenzano, Jean Lucas, João Victor, Cauã Felipe, Lucas Leckar
+        </p>
+    </footer>
+</body>
+</html>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+@code   {
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+    private List<Project>? oLista = new List<Project>();
+    List<string> _listanomes = [];
+
+    protected override async void OnInitialized()
+    {
+        oLista = await Service.ListProjectsAsync();
+        
+        foreach (Project p in oLista)
+        {
+            if (p.Name.Replace(" ", "").ToLower() != "portal")
+            {
+                _listanomes.Add(p.Name);
+            }
+        }
+    }
+}
