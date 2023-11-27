@@ -3,7 +3,7 @@
 public class Url
 {
     public int Id { get; private set; }
-    public string Address { get; /*private*/ set;}
+    public string Address { get; private set;}
     public Url()
     {
     }
