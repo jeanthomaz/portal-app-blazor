@@ -1,40 +1,67 @@
 ﻿@page "/"
-@using Core.Entities
-@inject Core.Interfaces.IService Service
 
-<div class="container mt-5">
-    <PageTitle>SI 2023</PageTitle>
-    
-    <h1 class="text-center">Projeto Integrador: Trabalhos do 4º período de SI - AEDB 2023</h1>
-    
-    <p class="text-center">O propósito desse portal é reunir os trabalhos da turma do 4º período de Sistemas de Informação das Faculdades Dom Bosco de 2023.</p>
-    
-    @if (_projects is null)
-    {
-        <p>
-            <em>Carregando...</em>
-        </p>
-    }
-    else
-    {
-        <div class="mt-4 d-flex flex-fill flex-wrap justify-content-center">
-        
-            @foreach (var project in _projects)
-            {
-                <ProjectCard Project="project"/>
-            }
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>    
+</head>
+<body>
+    <header>
+        <nav class="header__menu">
+            <a class="header__menu__link" href="/">MENU</a>
+            <a class="header__menu__link" href="/group/portal">SOBRE O PORTAL</a>
+        </nav>
+    </header>
+    <main class="circulo">
+        <div class="circulo__menu">
+            <div class="circulo__menu__linhas">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupoabc"><img class="circulo__menu__linhas__itens__imagem" src="images/icon1.png" alt="icone grupo 1"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 1</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupoxyz"><img class="circulo__menu__linhas__itens__imagem" src="images/icon2.png" alt="icone grupo 2"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 2</p>
+                </div>
+            </div>
+            <div class="circulo__menu__linhas-meio">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupo3"><img class="circulo__menu__linhas__itens__imagem" src="images/icon3.png" alt="icone grupo 3"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 3</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupo4"><img class="circulo__menu__linhas__itens__imagem" src="images/icon4.png" alt="icone grupo 4"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 4</p>
+                </div>
+            </div>
+            <div class="circulo__menu__linhas-meio">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupo5"><img class="circulo__menu__linhas__itens__imagem" src="images/icon5.png" alt="icone grupo 5"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 5</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupo6"><img class="circulo__menu__linhas__itens__imagem" src="images/icon6.png" alt="icone grupo 6"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 6</p>
+                </div>
+            </div>
+            <div class="circulo__menu__linhas">
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupo7"><img class="circulo__menu__linhas__itens__imagem" src="images/icon7.png" alt="icone grupo 7"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 7</p>
+                </div>
+                <div class="circulo__menu__linhas__itens">
+                    <a href="/group/grupo8"><img class="circulo__menu__linhas__itens__imagem" src="images/icon8.png" alt="icone grupo 8"></a>
+                    <p class="circulo__menu__linhas__itens__nome">GRUPO 8</p>
+                </div>
+            </div>
         </div>
-    }
-    
-</div>
-
-
-@code
-{
-    private List<Project>? _projects = new List<Project>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        _projects = await Service.ListProjectsAsync();
-    }
-}
+    </main>
+    <footer>
+        <p class="footer__texto">
+            Informações do Grupo
+        </p>
+    </footer>
+</body>
+</html>

@@ -21,4 +21,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="Pages\GroupPage.razor" />
+      <None Include="Pages\Index.razor" />
+      <None Include="Pages\_Host.cshtml" />
+    </ItemGroup>
+
 </Project>
